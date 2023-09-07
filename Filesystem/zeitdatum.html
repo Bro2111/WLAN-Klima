@@ -1,0 +1,61 @@
+
+<!DOCTYPE HTML> <!-- For more information visit: https://fipsok.de -->
+<html lang="de">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Uhrzeit</title>
+    <script>
+      function renew() {
+        fetch('/time').then(response => {
+          return response.json();
+        }).then(array => {
+		  document.querySelector('#time').innerHTML = array[0];
+          document.querySelector('#date').innerHTML = array[1];
+        });
+      }
+      document.addEventListener('DOMContentLoaded', renew, setInterval(renew, 1000));
+    </script>
+    <style>
+      body {
+        padding: 10px;
+        font-size: 3.2em;
+      }
+      main {
+		display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: black;
+        width: 280px;
+        height: 140px;
+        padding: .2em;
+        border: .15em solid #aeaeab;
+        box-shadow: 5px 10px 5px rgba(0, 0, 0, 0.7);
+        border-radius: .2em;
+      }
+      span {
+        color: #00ff05;
+        position: relative;
+        top: .3em;
+        left: .1em;
+        letter-spacing: .1em;
+        font-weight: bold
+      }
+	  #date {
+        font-size: .7em;
+        margin-top: .5em;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <span id="time"></span>
+      <span id="date"></span>
+    </main>
+   	<form><center>
+		<button type="submit" formaction="index.html">Startseite</button>
+	</form></center>
+
+  </body>
+</html>

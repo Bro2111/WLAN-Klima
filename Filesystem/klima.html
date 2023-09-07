@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<!-- visit: https://fipsok.de -->
+<html lang="de">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esp8285 Klimaanlage</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+			input.button{
+				height:40px;
+				width:150px;
+				font-size:16px;
+				margin-top: 1em;
+				box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
+				border:1px solid #b3b3b3;
+				border-radius: 10px;
+				font-family:arial, helvetica, sans-serif; 
+				padding: 10px 10px 10px 10px; 
+				text-decoration:none;
+				display:inline-block;
+				font-weight:bold; 
+				color: #000000;
+				background-image: linear-gradient(to bottom, #ffc579, #fb9d23);
+			}
+
+			input.larger { transform: scale(1.3); margin: 15px; } 
+			
+			form {
+			padding: 0.5em;
+			background-color: #D8EBFf;
+			background-image: linear-gradient(to left, #bDe7FF, #FFFFFF, #a7defa);
+			box-shadow: 0.1em 0.1em 0.1em #616362;
+			width: 350px;
+			}
+			
+			#msg {
+				background-color: yellow;
+				position: sticky;
+				bottom: 4em;
+			}
+			.note0:after {
+				content: "Fehler";
+				color: #fff;
+			}
+			.note1:after {
+				content: "Senden ok";
+				color: #fff;
+			}
+
+		</style>
+    <script>
+		//für Hinweistext
+			document.addEventListener('DOMContentLoaded', () => {});
+	  
+		//Abrufen und Anzeige der Daten
+			setInterval(loadDaten, 2000);
+			loadDaten();
+			function loadDaten(){
+				fetch('/daten').then( function(response){return response.json();})
+				.then(function(myArr){
+					document.getElementById("value0").innerHTML=myArr[0];
+					document.getElementById("value1").innerHTML=myArr[1];
+					document.getElementById("value2").innerHTML=myArr[2];
+					document.getElementById("value3").innerHTML=myArr[3];
+				});
+			}
+			
+			
+		//Buttons (On/Off) 
+			function btnPressed(btnId){
+			var value0=document.getElementById("sliTemp").value;
+			var value1="";
+			if(document.getElementById("radHeat").checked) value1 = "radHeat";
+			if(document.getElementById("radCool").checked) value1 = "radCool";
+			if(document.getElementById("radAuto").checked) value1 = "radAuto";
+			var value2="off";
+			if(document.getElementById("chkEco").checked) value2 = "on";
+			var value3="";
+			if(document.getElementById("radAir0").checked) value3 = "radAir0";
+			if(document.getElementById("radAir1").checked) value3 = "radAir1";
+			if(document.getElementById("radAir2").checked) value3 = "radAir2";
+			if(document.getElementById("radAir3").checked) value3 = "radAir3";
+      if(document.getElementById("radAir4").checked) value3 = "radAir4";
+			var value4="off";
+			if(document.getElementById("chkSave").checked) value4 = "on";
+			var value5="off";
+			if(document.getElementById("chkDisp").checked) value5 = "on";
+			var value6="off";
+			if(document.getElementById("chkBuzz").checked) value6 = "on";
+
+/*			var value7="off";
+			if(document.getElementById("chkReqTimer").checked) value7 = "on";
+			var value8="off";
+			if(document.getElementById("chkReqUDP").checked) value8 = "on";
+			var value9="off";
+			if(document.getElementById("chkReqWeb").checked) value9 = "on";
+			var value10="off";
+			if(document.getElementById("chkReqDbug").checked) value10 = "on";*/
+
+			var arg="?sliTemp="+value0+";radModus="+value1+";chkEco="+value2+";radAir="+value3+";chkSave="+value4+";chkDisp="+value5+";chkBuzz="+value6; //+";chkReqTimer="+value7+";chkReqUDP="+value8+";chkReqWeb="+value9+";chkReqDbug="+value10;
+			fetch('/btnSettingSend'+arg)
+				.then( function(response){
+					return response.json();
+				})
+				.then(function(myArr){
+				document.getElementById("sliTemp").value=myArr[0];
+				document.getElementById("radHeat").checked = false;
+				document.getElementById("radCool").checked = false;
+				document.getElementById("radAuto").checked = false;
+				document.getElementById(myArr[1]).checked = true;
+				document.getElementById("chkEco").checked = myArr[2] == "on";
+				document.getElementById("radAir0").checked = false;
+				document.getElementById("radAir1").checked = false;
+				document.getElementById("radAir2").checked = false;
+				document.getElementById("radAir3").checked = false;
+        document.getElementById("radAir4").checked = false;
+				document.getElementById(myArr[3]).checked = true;
+				document.getElementById("chkSave").checked = myArr[4] == "on";
+				document.getElementById("chkDisp").checked = myArr[5] == "on";
+				document.getElementById("chkBuzz").checked = myArr[6] == "on";
+				//document.getElementById("chkReqTimer").checked = myArr[7] == "on";
+				//document.getElementById("chkReqUDP").checked = myArr[8] == "on";
+				//document.getElementById("chkReqWeb").checked = myArr[9] == "on";
+				//document.getElementById("chkReqDbug").checked = myArr[10] == "on";
+			});
+
+				fetch('/btnclick?id='+ btnId)
+				.then( function(response){
+					return response.text();
+				})
+				.then (function(text){
+					if(text=="0")
+					{					
+						document.getElementById("msg").style.background="red";
+						let el = document.getElementById("msg");
+						el.classList.add('note0');
+						setTimeout(() => {
+							el.classList.remove('note0');
+						}, 5000);
+					}
+					else
+					{					
+						document.getElementById("msg").style.background="green";
+						let el = document.getElementById("msg");
+						el.classList.add('note1');
+						setTimeout(() => {
+							el.classList.remove('note1');
+						}, 5000);
+					}
+				});
+			}
+
+		//Einstellungen mit  Button übernehmen
+		btnSettingShow();
+		function btnSettingShow(){
+			fetch('/btnSettingShow')
+				.then( function(response){
+					return response.json();
+				})
+			.then(function(myArr){
+				document.getElementById("sliTemp").value=myArr[0];
+				document.getElementById("sliOutTemp").value=myArr[0];
+				document.getElementById("radHeat").checked = false;
+				document.getElementById("radCool").checked = false;
+				document.getElementById("radAuto").checked = false;
+				document.getElementById(myArr[1]).checked = true;
+				document.getElementById("chkEco").checked = myArr[2] == "on";
+				document.getElementById("radAir0").checked = false;
+				document.getElementById("radAir1").checked = false;
+				document.getElementById("radAir2").checked = false;
+				document.getElementById("radAir3").checked = false;
+        document.getElementById("radAir4").checked = false;
+				document.getElementById(myArr[3]).checked = true;
+				document.getElementById("chkSave").checked = myArr[4] == "on";
+				document.getElementById("chkDisp").checked = myArr[5] == "on";
+				document.getElementById("chkBuzz").checked = myArr[6] == "on";
+				//document.getElementById("chkReqTimer").checked = myArr[7] == "on";
+				//document.getElementById("chkReqUDP").checked = myArr[8] == "on";
+				//document.getElementById("chkReqWeb").checked = myArr[9] == "on";
+				//document.getElementById("chkReqDbug").checked = myArr[10] == "on";
+			});
+		}
+
+		function btnSettingSend(){
+			var value0=document.getElementById("sliTemp").value;
+			var value1="";
+			if(document.getElementById("radHeat").checked) value1 = "radHeat";
+			if(document.getElementById("radCool").checked) value1 = "radCool";
+			if(document.getElementById("radAuto").checked) value1 = "radAuto";
+			var value2="off";
+			if(document.getElementById("chkEco").checked) value2 = "on";
+			var value3="";
+			if(document.getElementById("radAir0").checked) value3 = "radAir0";
+			if(document.getElementById("radAir1").checked) value3 = "radAir1";
+			if(document.getElementById("radAir2").checked) value3 = "radAir2";
+			if(document.getElementById("radAir3").checked) value3 = "radAir3";
+      if(document.getElementById("radAir4").checked) value3 = "radAir4";
+			var value4="off";
+			if(document.getElementById("chkSave").checked) value4 = "on";
+			var value5="off";
+			if(document.getElementById("chkDisp").checked) value5 = "on";
+			var value6="off";
+			if(document.getElementById("chkBuzz").checked) value6 = "on";
+
+/*			var value7="off";
+			if(document.getElementById("chkReqTimer").checked) value7 = "on";
+			var value8="off";
+			if(document.getElementById("chkReqUDP").checked) value8 = "on";
+			var value9="off";
+			if(document.getElementById("chkReqWeb").checked) value9 = "on";
+			var value10="off";
+			if(document.getElementById("chkReqDbug").checked) value10 = "on";*/
+
+			var arg="?sliTemp="+value0+";radModus="+value1+";chkEco="+value2+";radAir="+value3+";chkSave="+value4+";chkDisp="+value5+";chkBuzz="+value6; //+";chkReqTimer="+value7+";chkReqUDP="+value8+";chkReqWeb="+value9+";chkReqDbug="+value10;
+			fetch('/btnSettingSend'+arg)
+				.then( function(response){
+					return response.json();
+				})
+				.then(function(myArr){
+				document.getElementById("sliTemp").value=myArr[0];
+				document.getElementById("radHeat").checked = false;
+				document.getElementById("radCool").checked = false;
+				document.getElementById("radAuto").checked = false;
+				document.getElementById(myArr[1]).checked = true;
+				document.getElementById("chkEco").checked = myArr[2] == "on";
+				document.getElementById("radAir0").checked = false;
+				document.getElementById("radAir1").checked = false;
+				document.getElementById("radAir2").checked = false;
+				document.getElementById("radAir3").checked = false;
+        document.getElementById("radAir4").checked = false;
+				document.getElementById(myArr[3]).checked = true;
+				document.getElementById("chkSave").checked = myArr[4] == "on";
+				document.getElementById("chkDisp").checked = myArr[5] == "on";
+				document.getElementById("chkBuzz").checked = myArr[6] == "on";
+				//document.getElementById("chkReqTimer").checked = myArr[7] == "on";
+				//document.getElementById("chkReqUDP").checked = myArr[8] == "on";
+				//document.getElementById("chkReqWeb").checked = myArr[9] == "on";
+				//document.getElementById("chkReqDbug").checked = myArr[10] == "on";
+			});
+		}
+		
+		</script>
+  </head>
+  <body>
+    <h1>Klimaanlage</h1>
+    <br>
+    <form>
+      <center><b><font size="+2">Betrieb</font></b></center>
+      <br>
+      <div>
+        <center><span id="value3">-</span><br>
+          <input id="btnON" class="button" onclick="btnPressed(id)" value="Ein"
+
+type="button"> <input id="btnOFF" class="button" onclick="btnPressed(id)" value="Aus"
+
+type="button"> </center>
+      </div>
+      <br>
+      <div id="msg"> </div>
+    </form>
+    <br>
+    <form oninput="sliOutTemp.value=parseInt(sliTemp.value)">
+      <center> <b><font size="+2">Einstellungen</font></b><br>
+        <label for="sliTemp" id="n1">16°</label> <input name="sliTemp" id="sliTemp"
+
+          class="larger" min="16" value="21" max="26" type="range"> <label for="sliTemp"
+
+          id="n2">26°</label> </center>
+      <center>Temperatur <b><output id="sliOutTemp" name="sliOutTemp" for="sliTemp">21</output>°</b></center>
+      <br>
+      <br>
+      <div class="toggle">
+        <center><label>Display<input id="chkDisp" type="checkbox"><span class="switch"></span></label></center>
+        <center><label>Buzzer<input id="chkBuzz" type="checkbox"><span class="switch"></span></label></center>
+        <center><label>Eco Modus<input id="chkEco" type="checkbox"><span class="switch"></span></label></center>
+      </div>
+      <div style="text-indent:60px;">Modus</div>
+      <br>
+      <center>
+        <div class="toggle-buttons together"> <input id="radAuto" name="radModus"
+
+            value="radAuto" type="radio"> <label for="radAuto">Auto</label> <input
+
+            id="radHeat" name="radModus" value="radHeat" type="radio"> <label for="radHeat">Heizen</label>
+          <input id="radCool" name="radModus" value="radCool" type="radio"> <label
+
+            for="radCool">Kühlen</label> </div>
+      </center>
+      <br>
+      <br>
+      <div style="text-indent:30px;">Lüfterdrehzahl</div>
+      <br>
+      <center>
+        <div class="toggle-buttons together"> <input id="radAir0" name="radAir"
+
+            value="radAir0" type="radio"> <label for="radAir0">Auto</label> <input
+
+            id="radAir4" name="radAir" value="radAir4" type="radio"> <label for="radAir4">Mute</label>
+          <input id="radAir1" name="radAir" value="radAir1" type="radio"> <label
+
+            for="radAir1">Langsam</label> <input id="radAir2" name="radAir" value="radAir2"
+
+            type="radio"> <label for="radAir2">Mittel</label> <input id="radAir3"
+
+            name="radAir" value="radAir3" type="radio"> <label for="radAir3">Schnell</label>
+        </div>
+      </center>
+      <br>
+      <br>
+      <br>
+      <div class="toggle">
+        <!--			<center><label>Zustands-<br> abfrage Timer<input type="checkbox" id="chkReqTimer"><span class="switch"></span></label></center>
+			<center><label>Gateway UDP<input type="checkbox" id="chkReqUDP"><span class="switch"></span></label></center>			<center><label>Bedienung über Webseite<input type="checkbox" id="chkReqWeb"><span class="switch"></span></label></center>			<center><label>RS232 Debug<input type="checkbox" id="chkReqDbug"><span class="switch"></span></label></center><br><br>-->
+        <center><label>In Datei Speichern<input id="chkSave" type="checkbox"><span
+
+              class="switch"></span></label></center>
+      </div>
+      <center><input value="Senden" class="button" onclick="btnSettingSend()" type="submit"></center>
+      <br>
+    </form>
+    <form>
+      <center> <b><font size="+2">Links</font></b><br>
+        <button type="submit" formaction="index.html">Startseite</button><br>
+        <button type="submit" formaction="zeitschaltuhr.html">Scheduler</button>
+      </center>
+      <br>
+    </form>
+    <br>
+    <br>
+    <hr width="355" align="center"> <b>Debuginfos</b>
+    <p> </p>
+    <center>Last Source: <span id="value0">-</span></center>
+    <br>
+    Gesendet : <span id="value1">-</span><br>
+    Empfangen: <span id="value2">-</span><br>
+    <p></p>
+    <hr width="355">
+  </body>
+</html>

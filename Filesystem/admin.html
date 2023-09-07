@@ -1,0 +1,188 @@
+<!DOCTYPE HTML> <!-- https://fipsok.de -->
+<html lang="de">
+  <head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="style.css">
+	<title>Esp8285 Klimaanlage Admin</title>
+	<style>
+	h1 + main {
+		display: flex;
+	} 
+	</style>
+	<script>
+		addEventListener('load', () => {
+		renew(), once();
+		let output = document.querySelector('#note');
+		let btn = document.querySelectorAll('button');
+		let span = document.querySelectorAll('#right span'); 
+		btn[0].addEventListener('click', () => {
+		  location = 'fs.html';
+		});
+		btn[1].addEventListener('click', () => {
+		  location = 'index.html';
+		});
+		btn[2].addEventListener('click', check.bind(this, document.querySelector('input')));
+		btn[3].addEventListener('click', re.bind(this, 'reconnect'));
+		btn[4].addEventListener('click', () => {
+			if (confirm('Bist du sicher!')) re('restart');
+		});
+		async function once(val = '',arg) {
+		  try {
+			let resp = await fetch('/admin/once', { method: 'POST', body: val});
+			let obj = await resp.json();
+			output.innerHTML = '';
+			output.classList.remove('note');
+			document.querySelector('form').reset();
+			if (val.length == 0) myIv = setInterval(renew, 2000);
+			if (arg == 'reconnect') re(arg);
+			span[3].innerHTML = obj['File'];
+			span[4].innerHTML = obj['Build'];
+			span[5].innerHTML = obj['SketchSize'];
+			span[6].innerHTML = obj['SketchSpace'];
+			span[7].innerHTML = obj['LocalIP'];		  
+			span[8].innerHTML = obj['Hostname'];
+			span[9].innerHTML = obj['SSID'];
+			span[10].innerHTML = obj['GatewayIP'];
+			span[11].innerHTML = obj['Channel'];
+			span[12].innerHTML = obj['MacAddress'];
+			span[13].innerHTML = obj['SubnetMask'];
+			span[14].innerHTML = obj['BSSID'];
+			span[15].innerHTML = obj['ClientIP'];
+			span[16].innerHTML = obj['DnsIP'];
+			span[17].innerHTML = obj['ResetReason'];
+			span[18].innerHTML = obj['CpuFreqMHz'] + " MHz";
+			span[19].innerHTML = obj['FreeHeap'];
+			span[20].innerHTML = obj['HeapFrag'] + "%";
+			span[21].innerHTML = obj['ChipSize'];
+			span[22].innerHTML = obj['ChipSpeed'] + " MHz";
+			span[23].innerHTML = obj['ChipMode'];
+			span[24].innerHTML = obj['IdeVersion'].replace(/(\d)(\d)(\d)(\d)/,obj['IdeVersion'][3]!=0 ? '$1.$3.$4' : '$1.$3.');
+			span[25].innerHTML = obj['CoreVersion'].replace(/_/g,'.');
+			span[26].innerHTML = obj['SdkVersion'];			  
+			span[27].innerHTML = obj['settingsdat'];			  
+			span[28].innerHTML = obj['ctimedat'];			  
+		  } catch(err) {
+			re();
+		  }  
+        }
+		async function renew() {
+		  const resp = await fetch('admin/renew');
+		  const array = await resp.json();
+		  array.forEach((v, i) => {span[i].innerHTML = v});
+		}
+		function check(inObj) {
+		  !inObj.checkValidity() ? (output.innerHTML = inObj.validationMessage, output.classList.add('note')) : (once(inObj.value, 'reconnect'));
+		}
+		function re(arg = '') {
+		  clearInterval(myIv);
+		  fetch(arg);
+		  output.classList.add('note');
+		  if (arg == 'restart') {
+			output.innerHTML = 'Der Server wird neu gestartet. Die Daten werden in 15 Sekunden neu geladen.';
+			setTimeout(once, 15000);
+		  } 
+		  else if (arg == 'reconnect'){
+			output.innerHTML = 'Die WiFi Verbindung wird neu gestartet. Daten werden in 10 Sekunden neu geladen.';
+			setTimeout(once, 10000);
+		  }
+		  else {
+			output.innerHTML = 'Es ist ein Verbindungfehler aufgetreten. Es wird versucht neu zu verbinden.';
+			setTimeout(once, 4000);
+		  }
+		}
+	  });
+	</script>
+  </head>
+  <body>
+	<h1>Esp8285 Klimaanlage Admin Page</h1>
+	<main>
+	  <aside id="left">
+		<span>Runtime ESP:</span>
+		<span>WiFi RSSI:</span>
+		<span>ADC/VCC:</span>
+		<span>Sketch Name:</span>
+		<span>Sketch Build:</span>
+		<span>Sketch Size:</span>
+		<span>Free Sketch Space:</span>
+		<br>&nbsp;<br>
+		<span>IP Address:</span>
+		<span>Hostname:</span>
+		<span>Connected to:</span>
+		<span>Gateway:</span>
+		<span>Channel:</span>
+		<span>MacAddress:</span>
+		<span>SubnetMask:</span>
+		<span>BSSID:</span>	  
+		<span>Client:</span>
+		<span>Dns:</span>
+		<br>&nbsp;<br>
+		<span>Reset Reason:</span>
+		<span>CPU Freq:</span>
+		<span>Free Heap:</span>
+		<span>Heap Fragmentation:</span>
+		<span>Flash Size:</span>
+		<span>Flash Speed:</span>
+		<span>Flash Mode:</span>
+		<span>Arduino IDE Version:</span>
+		<span>Esp Core Version:</span>
+		<span>SDK Version:</span>
+		<br>&nbsp;<br>
+		<span>Writes settings.dat:</span>
+		<span>Writes ctime.dat:</span>
+	  </aside>
+	  <aside id="right">
+		<span>0</span>
+		<div>
+		  <span></span>
+		  dBm
+		</div>
+		<span>0</span>
+		<span>?</span>
+		<span>0</span>
+		<span>0</span>
+		<span>0</span>
+		<br>&nbsp;<br>
+		<span>0</span>
+		<span>?</span>
+		<span>?</span>
+		<span>0</span>
+		<span>0</span>
+		<span>0</span>
+		<span>0</span>
+		<span>0</span>
+		<span>?</span>
+		<span>0</span>
+		<br>&nbsp;<br>
+		<span>0</span>
+		<span>0</span>
+		<span>0</span>
+		<span>0</span>
+		<span>0</span>
+		<span>0</span>
+		<span>0</span>
+		<span>0</span>
+		<span>0</span>
+		<span>0</span>			
+		<br>&nbsp;<br>
+		<span>0</span>
+		<span>0</span>
+      </aside>
+	</main>
+	<div>
+	  <button>Filesystem</button>
+	  <button>Startseite</button>
+    </div>
+	<div id="note"></div>
+	<div>
+		<form>
+			<input placeholder="neuer Hostname" pattern="([A-Za-z0-9-]{1,32})" title="Es dürfen nur Buchstaben (a-z, A-Z), Ziffern (0-9) und Bindestriche (-) enthalten sein. Maximal 32 Zeichen" required>
+			<button type="button">Name Senden</button>
+		</form>
+	</div>
+	<div>
+		<button>WiFi Reconnect</button>
+		<button>ESP Restart</button>
+	</div>
+  </body>
+</html>

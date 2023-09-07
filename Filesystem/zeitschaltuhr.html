@@ -1,0 +1,222 @@
+
+<!DOCTYPE HTML> <!-- For more information visit: https://fipsok.de -->
+<html lang="de">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <title>Timer</title>
+    <style>
+      main {
+        padding: .5em .5em .5em .1em;
+        box-shadow: 5px 3px 10px #4e4d4d;
+        background-color: #333;
+        color: #15dfdf;
+      }
+      div {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+      }
+      span {
+        padding: 0.5em;
+      }
+      input {
+        background-color: inherit;
+        font-size: 3em;
+        color: inherit;
+        border: solid #555;
+        height: auto;
+        font-weight: bold;
+      }
+      label {
+        font-size: .9em;
+        font-style: italic;
+		color: #777;
+      }
+	  input:checked+label {
+        color: #15dfdf;
+      }
+      div+span {
+        margin-left: 3em;
+      }
+      #top {
+        position: sticky;
+        top: 0;
+        background-color: #333;
+        z-index: 1;
+      }
+	  #bottom {
+        position: sticky;
+        bottom: .3em;
+        padding: .5em 0 0 .5em;
+      }
+      time {
+        text-shadow: 1px 1px 1px #777;
+        font-size: 1.4em;
+        font-weight: bold;
+      }
+      #bu, #fix, #tog {
+        background-color: #333;
+        color: black;
+        cursor: pointer;
+        border: outset #999;
+        width: 100%;
+        margin: 0;
+      }
+      #tog {
+        width: 25%;
+      }
+      [name^=bu] {
+        width: 2em;
+        cursor: pointer;
+      }
+      .none {
+        color: #777 !important;
+      }
+      svg {
+        width: 3.5em;
+      }
+	  u {
+        background-color: red !important;
+        position: sticky;
+        bottom: 4em;
+      }
+	  .note:after {
+        content: "Schaltzeiten gespeichert";
+        color: #fff;
+      }
+	  
+		input[type='checkbox'] {
+			width: 1rem;
+			height: 1rem;
+		}
+		
+      @media only screen and (max-width: 600px) {
+        input {
+          font-size: 2.4em;
+          width: auto;
+        }
+		div {
+		  justify-content: space-between
+		}
+        div+span {
+          margin-left: .2em;
+        }
+      }
+    </style>
+    <script>
+      var count = 7;					<!-- Anzahl Schaltzeiten(analog Sketch) einstellen 1 bis 60 -->
+	  var fixed;
+      var d = document;
+      d.addEventListener('DOMContentLoaded', () => {
+        dom();
+        d.querySelector('#bu').addEventListener('click', () => {
+          let formData = new FormData();
+          let arr = [];
+          formData.append('sTime', Array.from(d.querySelectorAll('input[type=time]')).map(x => x.value != 0 ? x.value : 0));
+          for (var i = 0; i < count; i++) {
+            let x = 0;
+            d.querySelectorAll(`input[name=c${i}]`).forEach((el, i) => { if (el.checked) x = x | (1 << i) });
+            arr.push(x);
+          }
+          formData.append(`sDay`, arr);
+          send(formData);
+        });
+        d.querySelector('#fix').addEventListener('click', renew);
+        for (var i = 0; i < count;) d.querySelector(`[name=bu${i++}]`).addEventListener('click', setActive);
+      }, renew(), setTimeout(send, 900), setInterval(renew, 1000));
+      
+	  function dom() {
+        var buf = '';
+        for (var i = 0; i < count; i++) {
+          buf += `<div id="ak${i}"><span name="bu${i}"></span><input type="time" id="sz${i * 2}" value=""><span> -- </span><input type="time" id="sz${i * 2 + 1}" value=""></div><span id="t${i}">`;
+          ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"].forEach(v => {
+            buf += `<input type="checkbox" name='c${i}'><label> ${v} </label>`;
+          });
+          buf += "</span>";
+        }
+        buf += '<br><br><div id="bottom"><button class="button" id="bu" ><font color="black">Zeiten Speichern</font></button><button class="button" id="fix"><font color="black">--</font></button></div>';
+        d.querySelector('main').insertAdjacentHTML('beforeend', buf);
+      }
+      
+	  function setActive() {
+        let formData = new FormData();
+        formData.append(this.parentNode.id.substr(2, 5), this.textContent == 'ON' ? '0' : '1');
+        send(formData);
+      }
+      
+	  function send(arg) {
+        fetch('/timer', {
+          method: 'post',
+          body: arg
+        }).then(resp => {
+          if (resp.ok) {
+            if (arg && arg.has('sTime')) {
+              let el = d.querySelector('u');
+              el.classList.add('note');
+              setTimeout(() => {
+                el.classList.remove('note');
+              }, 5e3);
+            }
+          }
+          return resp.json();
+        }).then(array => {
+          if (array.length > count) {
+            array.forEach((v, i) => {
+              if (i < count * 2) d.getElementById(`sz${i}`).value = v;
+              if (i == count * 2) getActive(v);
+              if (i > count * 2) {
+                let el = d.getElementsByName(`c${i - count * 2 - 1}`);
+                for (let k in el) {
+                  v & (1 << k) ? el[k].checked = true : el.checked = false;
+                }
+              }
+            });
+          }
+          else {
+            getActive(array);
+          }
+        });
+      }
+      
+	  function getActive(arg) {
+        for (var i = 0; i < count; i++) {
+          if (arg.length > 0) d.querySelector(`[name=bu${i}]`).textContent = (arg[i] % 2 ? 'ON' : 'OFF');
+          let el = d.getElementById(`ak${i}`).classList;
+          fixed == 0 ? arg[i] % 2 ? el.remove("none") : el.add("none") : el.add("none");;
+          el = d.getElementById(`t${i}`).childNodes;
+          fixed == 0 ? el.forEach(v => { arg[i] % 2 ? v.classList.remove("none") : v.classList.add("none") }) : el.forEach(v => { v.classList.add("none") });
+        }
+      }
+      
+	  function renew(id) {
+        if (id) id = id.currentTarget.id;
+        fetch(`timer?tog=${id}`).then(resp => {
+          return resp.json();
+        }).then(array => {
+          d.querySelector('time').innerHTML = array[1];
+          d.getElementById('fix').innerHTML = array[2] == 0 ? "Set inaktiv" : "Set aktiv";
+          fixed = array[2];
+          if (id == 'fix') fixed == 1 ? getActive(0) : send();
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Zeitschaltuhr</h1>
+    <main>
+      <div id="top">
+        <time>00:00:00</time>
+      </div>
+	  <br>
+    </main>
+	<form><center>
+		<br>
+		<button type="submit" formaction="index.html">Startseite</button><br>
+		<button type="submit" formaction="klima.html">Klimacontrol</button>
+	</center></form>
+
+    <u></u>
+  </body>
+</html>

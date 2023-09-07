@@ -1,0 +1,47 @@
+
+<!DOCTYPE HTML> <!-- For more information visit: https://fipsok.de -->
+<html lang="de">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <style>
+	  #msg {
+        background-color: yellow;
+        position: sticky;
+        bottom: 4em;
+      }
+	  .note0:after {
+        content: "nio";
+        color: #fff;
+      }
+	  .note1:after {
+        content: "io";
+        color: #fff;
+      }
+
+    </style>
+    <script>
+
+      document.addEventListener('DOMContentLoaded', () => {
+			document.getElementById("msg").style.background="green";
+                 let el = document.getElementById("msg");
+				
+              el.classList.add('note0');
+              
+			  setTimeout(() => {
+                el.classList.remove('note0');
+              }, 5e3);
+     
+      });
+      
+    </script>
+  </head>
+  <body>
+    <main>
+	  <br>
+    </main>
+<div id="msg"> </div>
+    <u></u>
+  </body>
+</html>

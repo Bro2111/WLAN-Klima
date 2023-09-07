@@ -1,0 +1,254 @@
+
+/* For more information visit:https://fipsok.de */
+body {
+	font-family: sans-serif;
+	background: linear-gradient(to left, #3DB7FF, #FFFFFF, #87cefa);
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+}
+h1,h2 {
+	color: #e1e1e1;
+	text-shadow: 2px 2px 2px black;
+}
+li {
+	background-color: #feb1e2;
+	list-style-type: none;
+	margin-bottom: 10px;
+	padding: 2px 5px 1px 0;
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
+}
+li a:first-child, li b {
+	background-color: #8f05a5;
+	font-weight: bold;
+	color: white;
+	text-decoration:none;
+	padding: 2px 5px;
+	text-shadow: 2px 2px 1px black;
+	cursor:pointer;
+}
+li strong {
+	color: red;
+}
+input {
+	/*height:35px;*/
+	font-size:16px;
+	padding-left: .3em;
+}
+label + a {
+	text-decoration: none;
+}
+h1,h2 + main {
+	display: flex;
+} 
+ 
+aside {
+	display: flex;
+	flex-direction: column;
+	padding: 0.2em;
+}
+
+button {
+	height:40px;
+	width:150px;
+	font-size:16px;
+	margin-top: 1em;
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
+border:1px solid #b3b3b3;
+border-radius: 10px;
+font-family:arial, helvetica, sans-serif; 
+padding: 10px 10px 10px 10px; 
+text-decoration:none;
+display:inline-block;
+font-weight:bold; 
+color: #000000;
+
+background-image: linear-gradient(to bottom, #ffc579, #fb9d23);
+}
+
+div button {
+	background-color: #7bff97;
+}
+
+nav {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+}
+#left {
+	align-items:flex-end;
+	text-shadow: 0.5px 0.5px 1px #757474;
+}
+#cr {
+	font-weight: bold;
+	cursor:pointer;
+	font-size: 1.5em;
+}
+#up {
+	width: auto; 
+}
+.note,.note0,.note1 {
+	background-color: #fecdee;
+	padding: 0.5em;
+	margin-top: 1em;
+	text-align: center;
+	max-width: 320px;
+	border-radius: 0.5em;
+}
+.no {
+	display: none;
+}
+form [title] {
+	background-color: skyblue;
+	font-size: 16px;
+	width: 140px;
+}
+form:nth-of-type(2) {
+	margin-bottom: 1em;
+}
+[value*=Format] {
+	margin-top: 1em;
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
+}
+[name="group"] {
+	display: none;
+}
+[name="group"] + label {
+	font-size: 1.5em;
+	margin-right: 5px;
+}
+[name="group"] + label::before {
+	content: "\002610";
+}	
+[name="group"]:checked + label::before {
+	content: '\002611\0027A5';
+}
+
+
+
+/*Checkbox*/
+.toggle-buttons input[type="radio"] {
+	visibility: hidden;
+}
+
+.toggle-buttons label {
+	border:1px solid #b3b3b3;
+	border-radius: 0.5em;
+	padding: 0.5em;
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
+	font-size: 15px;
+}
+
+.toggle-buttons input:checked + label {
+	background-image: linear-gradient(to bottom, #87cefa, #0040FF);
+}
+
+input:hover + label,
+input:focus + label {
+	background: #ffebe6;
+}
+
+.together {
+	position: relative;
+}
+
+.together input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	top: 0;
+	left: 0;
+}
+
+.together label {
+	margin: 0.5em 0;
+	border-radius: 0;
+	font-weight:bold; 
+}
+
+.together label:first-of-type {
+	border-radius: 0.5em 0 0 0.5em;
+}
+
+.together label:last-of-type {
+	border-radius: 0 0.5em 0.5em 0;
+}
+
+/*Checkbox Schalter*/
+.toggle label {
+	position: relative;
+	display: inline-block;
+	width: 10em;
+	left: -3em;
+	height: 3.5em;
+}
+
+.toggle input {
+	display: none;
+}
+
+.toggle .switch {
+	/* Grundfläche */
+	
+	position: absolute;
+	cursor: pointer;
+	top: -0.5em;
+	left: 10em;
+	width: 4em;
+	height: 2em;
+	background-color: #A4A4A4;
+	/* red */
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.7);
+	
+	transition: all .3s ease-in-out;
+	border-radius: 1em;
+}
+
+.toggle .switch:before {
+	/* verschiebbarer Button */
+	
+	position: absolute;
+	content: "";
+	height: 1.6em;
+	width: 1.6em;
+	left: 0.2em;
+	bottom: 0.2em;
+	background-color: white;
+	border-radius: 50%;
+	transition: all .3s ease-in-out;
+}
+
+.toggle input:checked + .switch {
+	background-color: #0040FF;
+	/* green */
+}
+
+.toggle input:focus + .switch {
+	background-color: pink;
+	box-shadow: 0 0 1px #5a9900;
+}
+
+.toggle input:checked + .switch:before {
+	transform: translateX(1.9em);
+}
+
+.text .switch:after {
+	/* Text vor dem FlipFlop-Schalter */
+	
+	position: absolute;
+	content: "AUS";
+	color: #c32e04;
+	font-weight: bold;
+	height: 1.6em;
+	left: -2.5em;
+	bottom: 0.2em;
+}
+
+.text input:checked + .switch:after {
+	/* Text hinter dem FlipFlop-Schalter */
+	
+	position: absolute;
+	content: "AN";
+	color: #5a9900;
+	left: 4.5em;
+}
