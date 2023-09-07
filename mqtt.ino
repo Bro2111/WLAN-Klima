@@ -19,12 +19,12 @@ char* ptr;
 char msg1[MSG_BUFFER_SIZE];
   //mqttClient.publish( mqttAntOut, (char *) payload);
   
-
-  iTemperaturMqtt = 21;   //Temperatur
-  iModusMqtt = 131;              //Modus (Heizen,Kühlen etc.) Byte 7 und 8 ist noch nicht berücksichtigt
-  iAirMqtt = 4;               //Lüfterdrehzahl
-  iSettingMqtt = 132;        //Eco, Display, Buzzer + EIN
-  iStart = 10;
+ // Mqtt-command iStart,ITemperatur,Modus,iAir,iStetting 
+  iTemperaturMqtt = 21;      //Temperatur
+  iModusMqtt = 131;          //Modus (Heizen (1), Trocknen (2), Kühlen (3) , Lüftung (7), Auto (8) Lüfter Mute (128))  Byte 8 (Swing?) ist noch nicht berücksichtigt
+  iAirMqtt = 4;              //Lüfterdrehzahl (Auto (0), 
+  iSettingMqtt = 132;        //Summe aus Eco Ein (128), Display Ein (64), Buzzer Ein (32) + EIN (4)
+  iStart = 10;               // 1- Einschalten ; 0 -Ausschalten
 
   for (int i = 0; i < length; i++) {
     //Serial.print((char)payload[i]);
