@@ -34,14 +34,14 @@
 #define CONFIG                                // Einkommentieren wenn der ESP dem Router die IP mitteilen soll.
 #define NO_SLEEP                              // Auskommentieren wenn der Nodemcu den deep sleep Modus nutzt.
 
-const char* ssid = "FRITZ!Asterisk";              // Darf bis zu 32 Zeichen haben.
-const char* password = "7460651262901570";       // Mindestens 8 Zeichen jedoch nicht lÃ¤nger als 64 Zeichen.
+const char* ssid = "XXXXXXXXXXXXXXXXXXXX";              // Darf bis zu 32 Zeichen haben.
+const char* password = "XXXXXXXXXXXXXXXX";       // Mindestens 8 Zeichen jedoch nicht lÃ¤nger als 64 Zeichen.
 
 #ifdef CONFIG
-IPAddress staticIP(192, 168, 99, 15);         // Statische IP des NodeMCU ESP8266
-IPAddress gateway(192, 168, 99, 10);            // IP-Adresse des Router
+IPAddress staticIP(192, 168, XXX, XXX);         // Statische IP des NodeMCU ESP8266
+IPAddress gateway(192, 168, XXX, XXX);            // IP-Adresse des Router
 IPAddress subnet(255, 255, 255, 0);           // Subnetzmaske des Netzwerkes
-IPAddress dns(192, 168, 99, 10);                // DNS Server
+IPAddress dns(192, 168, XXX, XXX);                // DNS Server
 #endif
 
 void connectWifi() {                            // Funktionsaufruf "connectWifi();" muss im Setup eingebunden werden.
