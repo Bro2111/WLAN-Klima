@@ -34,5 +34,3 @@ Klimaanlage:
   
 Somit kann die Anlage im lokalen Netz manuell oder über eine 
 Hausautomation gesteuert werden.
-
-Tested de
