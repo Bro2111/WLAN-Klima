@@ -118,7 +118,7 @@ V1.0
 #include <string>
 
 #define MSG_BUFFER_SIZE (50)
-const char* mqtt_server = "192.168.99.9"; // eg. your-demo.cedalo.cloud or 192.168.1.11
+const char* mqtt_server = "192.168.XXX.XXX"; // eg. your-demo.cedalo.cloud or 192.168.1.11
 const uint16_t mqtt_server_port = 1883; // or 8883 most common for tls transport
 const char* mqttUser = "";
 const char* mqttPassword = "";
