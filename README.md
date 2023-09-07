@@ -4,6 +4,7 @@ ESP8266  control of split air conditioning
 Tested devices:
 
 Bomann CL6045QC
+
 Hantech Split-Klimaanlagen mit RS232 Abschluss
 
 I have the basic settings and feedback
